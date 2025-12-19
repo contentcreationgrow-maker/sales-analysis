@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>SuperStore Insight Dashboard</title>
+    <title>SuperStore Insight Studio</title>
 
     <link rel="stylesheet" href="styles.css" />
 
@@ -19,79 +19,142 @@
       <!-- Top bar -->
       <header class="topbar">
         <div class="brand">
-          <div class="logo">SS</div>
+          <div class="logoMark" aria-hidden="true">
+            <!-- Inline SVG mark -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M5 7.5C5 6.12 6.12 5 7.5 5h9C17.88 5 19 6.12 19 7.5v9c0 1.38-1.12 2.5-2.5 2.5h-9C6.12 19 5 17.88 5 16.5v-9Z" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M8 9h8M8 12h8M8 15h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+
           <div class="brandText">
-            <div class="title">SuperStore Insight Dashboard</div>
-            <div class="subtitle">
-              Upload a CSV → Explore trends, profitability, returns, and operational drivers
-            </div>
+            <div class="brandTitle">SuperStore Insight Studio</div>
+            <div class="brandSub">Upload CSV → Explore profit drivers, returns, discounts, operations</div>
           </div>
         </div>
 
-        <div class="topActions">
-          <label class="fileBtn" for="fileInput">
-            <input id="fileInput" type="file" accept=".csv" />
-            <span>Upload CSV</span>
-          </label>
+        <div class="topRight">
+          <div class="datasetChips">
+            <div class="chip" id="chipRows">Rows: —</div>
+            <div class="chip" id="chipRange">Range: —</div>
+            <div class="chip subtle" id="chipView">View: All</div>
+          </div>
 
-          <button id="btnReset" class="btn ghost" disabled>Reset</button>
-          <button id="btnExport" class="btn" disabled>Download filtered CSV</button>
+          <div class="actions">
+            <label class="fileBtn" for="fileInput">
+              <input id="fileInput" type="file" accept=".csv" />
+              <span>Upload CSV</span>
+            </label>
 
-          <button id="btnTheme" class="btn ghost" aria-label="Toggle theme">
-            Theme
-          </button>
+            <button id="btnReset" class="btn ghost" disabled>Reset</button>
+            <button id="btnExport" class="btn" disabled>Download filtered CSV</button>
 
-          <button id="btnHelp" class="btn ghost">Help</button>
+            <button id="btnTheme" class="btn ghost" aria-label="Toggle theme">Theme</button>
+            <button id="btnHelp" class="btn ghost">Help</button>
+          </div>
         </div>
       </header>
 
-      <!-- Layout -->
-      <div class="layout">
-        <!-- Sidebar filters -->
+      <div class="shell">
+        <!-- Sidebar -->
         <aside class="sidebar">
-          <div class="panel">
-            <div class="panelHeader">
-              <div class="panelTitle">Filters</div>
-              <div class="panelHint">All visuals update instantly</div>
+          <div class="sideHeader">
+            <div class="sideTitle">Filters</div>
+            <div class="sideHint">Searchable multi-select • Chips • Instant updates</div>
+          </div>
+
+          <div class="sidePanel">
+            <div class="accordion">
+              <details open>
+                <summary>
+                  <span>Time</span>
+                  <span class="mini">Year / Month</span>
+                </summary>
+
+                <div class="accBody">
+                  <div class="field">
+                    <label>Year</label>
+                    <div id="fYear" class="msHost" data-placeholder="Select year(s)"></div>
+                  </div>
+
+                  <div class="field">
+                    <label>Quarter</label>
+                    <div id="fQuarter" class="msHost" data-placeholder="Select quarter(s)"></div>
+                  </div>
+                </div>
+              </details>
+
+              <details open>
+                <summary>
+                  <span>Geography</span>
+                  <span class="mini">Region / State</span>
+                </summary>
+
+                <div class="accBody">
+                  <div class="field">
+                    <label>Region</label>
+                    <div id="fRegion" class="msHost" data-placeholder="Select region(s)"></div>
+                  </div>
+                  <div class="field">
+                    <label>State</label>
+                    <div id="fState" class="msHost" data-placeholder="Select state(s)"></div>
+                  </div>
+                </div>
+              </details>
+
+              <details open>
+                <summary>
+                  <span>Product</span>
+                  <span class="mini">Category / Sub</span>
+                </summary>
+
+                <div class="accBody">
+                  <div class="field">
+                    <label>Category</label>
+                    <div id="fCategory" class="msHost" data-placeholder="Select category(s)"></div>
+                  </div>
+
+                  <div class="field">
+                    <label>Sub-Category</label>
+                    <div id="fSubCategory" class="msHost" data-placeholder="Select sub-category(s)"></div>
+                  </div>
+                </div>
+              </details>
+
+              <details>
+                <summary>
+                  <span>Customer & Channel</span>
+                  <span class="mini">Segment / Payment</span>
+                </summary>
+
+                <div class="accBody">
+                  <div class="field">
+                    <label>Segment</label>
+                    <div id="fSegment" class="msHost" data-placeholder="Select segment(s)"></div>
+                  </div>
+                  <div class="field">
+                    <label>Payment Mode</label>
+                    <div id="fPaymentMode" class="msHost" data-placeholder="Select payment mode(s)"></div>
+                  </div>
+                </div>
+              </details>
+
+              <details>
+                <summary>
+                  <span>Operations</span>
+                  <span class="mini">Ship Mode</span>
+                </summary>
+
+                <div class="accBody">
+                  <div class="field">
+                    <label>Ship Mode</label>
+                    <div id="fShipMode" class="msHost" data-placeholder="Select ship mode(s)"></div>
+                  </div>
+                </div>
+              </details>
             </div>
 
-            <div class="field">
-              <label>Year</label>
-              <select id="fYear" multiple></select>
-              <div class="micro">Tip: Ctrl/⌘ to multi-select</div>
-            </div>
-
-            <div class="field">
-              <label>Region</label>
-              <select id="fRegion" multiple></select>
-            </div>
-
-            <div class="field">
-              <label>Category</label>
-              <select id="fCategory" multiple></select>
-            </div>
-
-            <div class="field">
-              <label>Sub-Category</label>
-              <select id="fSubCategory" multiple></select>
-            </div>
-
-            <div class="field">
-              <label>Segment</label>
-              <select id="fSegment" multiple></select>
-            </div>
-
-            <div class="field">
-              <label>Ship Mode</label>
-              <select id="fShipMode" multiple></select>
-            </div>
-
-            <div class="field">
-              <label>Payment Mode</label>
-              <select id="fPaymentMode" multiple></select>
-            </div>
-
-            <div class="field inline">
+            <div class="quickToggles">
               <label class="toggle">
                 <input id="fReturnedOnly" type="checkbox" />
                 <span>Returned only</span>
@@ -99,151 +162,220 @@
 
               <label class="toggle">
                 <input id="fLossOnly" type="checkbox" />
-                <span>Loss orders only</span>
+                <span>Loss rows only</span>
               </label>
             </div>
 
-            <div class="divider"></div>
-
-            <div class="panelFooter">
-              <div class="status" id="statusText">Upload a CSV to begin.</div>
-              <div class="muted" id="dataMeta"></div>
+            <div class="sideFooter">
+              <div class="statusLine">
+                <span class="dot" id="statusDot"></span>
+                <span id="statusText">Upload a CSV to begin.</span>
+              </div>
+              <div class="meta" id="dataMeta"></div>
             </div>
           </div>
 
-          <div class="panel">
-            <div class="panelHeader">
-              <div class="panelTitle">Auto Insights</div>
-              <div class="panelHint">Generated from your filtered view</div>
+          <div class="sidePanel">
+            <div class="sideHeader small">
+              <div class="sideTitle">Auto Insights</div>
+              <div class="sideHint">Generated from current filtered view</div>
             </div>
-
             <ul id="insights" class="insights">
               <li class="placeholder">No data yet. Upload a CSV.</li>
             </ul>
           </div>
         </aside>
 
-        <!-- Main content -->
+        <!-- Main -->
         <main class="main">
+          <!-- Tabs -->
+          <nav class="tabs" aria-label="Dashboard sections">
+            <button class="tab active" data-tab="overview">Overview</button>
+            <button class="tab" data-tab="profitability">Profitability</button>
+            <button class="tab" data-tab="geography">Geography</button>
+            <button class="tab" data-tab="operations">Operations</button>
+          </nav>
+
           <!-- KPI row -->
-          <section class="kpis" id="kpiRow">
-            <!-- injected -->
+          <section class="kpis" id="kpiRow"></section>
+
+          <!-- OVERVIEW -->
+          <section class="section active" id="tab-overview">
+            <div class="grid">
+              <div class="card span2">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Monthly Sales & Profit</div>
+                    <div class="cardSub">Zoom, pan, hover. Compare scale vs profitability.</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chMonthlySalesProfit" title="Expand">
+                      <span class="icon">⤢</span>
+                    </button>
+                    <button class="iconBtn" data-action="download" data-chart="chMonthlySalesProfit" title="Download PNG">
+                      <span class="icon">⭳</span>
+                    </button>
+                  </div>
+                </div>
+                <div id="chMonthlySalesProfit" class="chart"></div>
+              </div>
+
+              <div class="card">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Monthly Profit Margin</div>
+                    <div class="cardSub">Spot margin compression or recovery.</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chMonthlyMargin" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chMonthlyMargin" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
+                </div>
+                <div id="chMonthlyMargin" class="chart"></div>
+              </div>
+
+              <div class="card">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Category Mix</div>
+                    <div class="cardSub">Sales vs profit by category (mix shift signal).</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chCategoryMix" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chCategoryMix" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
+                </div>
+                <div id="chCategoryMix" class="chart"></div>
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="card span2">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Top/Bottom Sub-Categories by Profit</div>
+                    <div class="cardSub">Fast way to find winners and loss-makers.</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chSubcatProfit" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chSubcatProfit" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
+                </div>
+                <div id="chSubcatProfit" class="chart"></div>
+              </div>
+
+              <div class="card">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Profit Concentration</div>
+                    <div class="cardSub">How dependent are you on a small set of lines?</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chProfitConcentration" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chProfitConcentration" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
+                </div>
+                <div id="chProfitConcentration" class="chart"></div>
+              </div>
+            </div>
+
+            <div class="tables">
+              <div class="card">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Top Profit Products</div>
+                    <div class="cardSub">Protect these (availability, upsell, fulfillment priority).</div>
+                  </div>
+                </div>
+                <div class="tableWrap">
+                  <table class="tbl" id="tblTopProducts"></table>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Top Loss Products</div>
+                    <div class="cardSub">Prime candidates for discount rules or price review.</div>
+                  </div>
+                </div>
+                <div class="tableWrap">
+                  <table class="tbl" id="tblLossProducts"></table>
+                </div>
+              </div>
+            </div>
           </section>
 
-          <!-- Charts grid -->
-          <section class="grid">
-            <div class="card span2">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Monthly Sales & Profit</div>
-                  <div class="cardSub">See growth vs profitability (zoom/hover)</div>
+          <!-- PROFITABILITY -->
+          <section class="section" id="tab-profitability">
+            <div class="grid">
+              <div class="card span2">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Discount vs Profit</div>
+                    <div class="cardSub">Check whether higher discount clusters are loss-heavy.</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chDiscountProfit" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chDiscountProfit" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
                 </div>
+                <div id="chDiscountProfit" class="chart"></div>
               </div>
-              <div id="chMonthlySalesProfit" class="chart"></div>
-            </div>
 
-            <div class="card">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Monthly Profit Margin</div>
-                  <div class="cardSub">Watch margin compression</div>
+              <div class="card">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Payment Mode Margin</div>
+                    <div class="cardSub">Compare economics across payment channels.</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chPaymentMargin" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chPaymentMargin" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
                 </div>
+                <div id="chPaymentMargin" class="chart"></div>
               </div>
-              <div id="chMonthlyMargin" class="chart"></div>
-            </div>
-
-            <div class="card">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Category Mix</div>
-                  <div class="cardSub">Sales vs profit by category</div>
-                </div>
-              </div>
-              <div id="chCategoryMix" class="chart"></div>
-            </div>
-
-            <div class="card span2">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Top/Bottom Sub-Categories by Profit</div>
-                  <div class="cardSub">Quickly find winners & loss-makers</div>
-                </div>
-              </div>
-              <div id="chSubcatProfit" class="chart"></div>
-            </div>
-
-            <div class="card">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Region: Margin & Returns</div>
-                  <div class="cardSub">Operational pressure points</div>
-                </div>
-              </div>
-              <div id="chRegionMarginReturns" class="chart"></div>
-            </div>
-
-            <div class="card span2">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Profit by State (USA)</div>
-                  <div class="cardSub">Where profit leaks (select states)</div>
-                </div>
-              </div>
-              <div id="chStateChoropleth" class="chart tall"></div>
-            </div>
-
-            <div class="card">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Discount vs Profit</div>
-                  <div class="cardSub">Are discounts driving losses?</div>
-                </div>
-              </div>
-              <div id="chDiscountProfit" class="chart"></div>
-            </div>
-
-            <div class="card">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Ship Lead Time by Ship Mode</div>
-                  <div class="cardSub">Speed vs economics</div>
-                </div>
-              </div>
-              <div id="chShipLead" class="chart"></div>
             </div>
           </section>
 
-          <!-- Tables -->
-          <section class="tables">
-            <div class="card">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Top Profit Products</div>
-                  <div class="cardSub">Concentration risk & what to protect</div>
+          <!-- GEOGRAPHY -->
+          <section class="section" id="tab-geography">
+            <div class="grid">
+              <div class="card span2">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">USA State Profit Map</div>
+                    <div class="cardSub">Find where profit leaks. Hover for profit values.</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chStateChoropleth" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chStateChoropleth" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
                 </div>
+                <div id="chStateChoropleth" class="chart tall"></div>
               </div>
-              <div class="tableWrap">
-                <table class="tbl" id="tblTopProducts"></table>
+
+              <div class="card">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Region: Margin & Returns</div>
+                    <div class="cardSub">Operational hotspots and profitability trade-offs.</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chRegionMarginReturns" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chRegionMarginReturns" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
+                </div>
+                <div id="chRegionMarginReturns" class="chart"></div>
               </div>
             </div>
 
             <div class="card">
-              <div class="cardHead">
-                <div>
-                  <div class="cardTitle">Top Loss Products</div>
-                  <div class="cardSub">What’s bleeding margin</div>
-                </div>
-              </div>
-              <div class="tableWrap">
-                <table class="tbl" id="tblLossProducts"></table>
-              </div>
-            </div>
-
-            <div class="card span2">
               <div class="cardHead">
                 <div>
                   <div class="cardTitle">State Profit Leaderboard</div>
-                  <div class="cardSub">Best and worst states (sortable)</div>
+                  <div class="cardSub">Sortable table. Quickly isolate worst states.</div>
                 </div>
               </div>
               <div class="tableWrap">
@@ -252,36 +384,85 @@
             </div>
           </section>
 
+          <!-- OPERATIONS -->
+          <section class="section" id="tab-operations">
+            <div class="grid">
+              <div class="card">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Ship Lead Time by Ship Mode</div>
+                    <div class="cardSub">Distribution view (box plot). Speed consistency matters.</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chShipLead" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chShipLead" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
+                </div>
+                <div id="chShipLead" class="chart"></div>
+              </div>
+
+              <div class="card span2">
+                <div class="cardHead">
+                  <div>
+                    <div class="cardTitle">Ship Mode Economics</div>
+                    <div class="cardSub">Margin and return rate by ship mode.</div>
+                  </div>
+                  <div class="cardActions">
+                    <button class="iconBtn" data-action="expand" data-chart="chShipEconomics" title="Expand"><span class="icon">⤢</span></button>
+                    <button class="iconBtn" data-action="download" data-chart="chShipEconomics" title="Download PNG"><span class="icon">⭳</span></button>
+                  </div>
+                </div>
+                <div id="chShipEconomics" class="chart"></div>
+              </div>
+            </div>
+          </section>
+
           <footer class="footer">
-            Built for interactive deep analysis. Everything runs locally in your browser.
+            Everything runs locally in your browser. No backend required.
           </footer>
         </main>
       </div>
-    </div>
 
-    <!-- Help modal -->
-    <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true">
-      <div class="modalCard">
-        <div class="modalHead">
-          <div>
-            <div class="modalTitle">CSV Expectations</div>
-            <div class="modalSub">
-              Works best with the SuperStore dataset columns. Some columns are optional.
+      <!-- Chart modal (expand) -->
+      <div id="chartModal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modalCard">
+          <div class="modalHead">
+            <div>
+              <div class="modalTitle" id="modalTitle">Chart</div>
+              <div class="modalSub" id="modalSub">Expanded view</div>
+            </div>
+            <div class="modalActions">
+              <button id="btnModalDownload" class="btn">Download PNG</button>
+              <button id="btnModalClose" class="btn ghost">Close</button>
             </div>
           </div>
-          <button id="btnCloseHelp" class="btn ghost">Close</button>
+          <div class="modalBody">
+            <div id="modalChart" class="chart modalChart"></div>
+          </div>
         </div>
+      </div>
 
-        <div class="modalBody">
-          <div class="pillGrid">
-            <div class="pill"><b>Required:</b> Order Date, Sales, Profit</div>
-            <div class="pill"><b>Recommended:</b> Category, Sub-Category, Region, State</div>
-            <div class="pill"><b>Nice to have:</b> Segment, Ship Mode, Payment Mode, Discount</div>
-            <div class="pill"><b>Returns:</b> Returns (1/Yes/True/Returned)</div>
+      <!-- Help modal -->
+      <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modalCard">
+          <div class="modalHead">
+            <div>
+              <div class="modalTitle">CSV Expectations</div>
+              <div class="modalSub">Works best with SuperStore-style columns</div>
+            </div>
+            <button id="btnCloseHelp" class="btn ghost">Close</button>
           </div>
 
-          <div class="note">
-            If some fields are missing, the dashboard will still load but some visuals may hide automatically.
+          <div class="modalBody">
+            <div class="pillGrid">
+              <div class="pill"><b>Required:</b> Order Date, Sales, Profit</div>
+              <div class="pill"><b>Recommended:</b> Category, Sub-Category, Region, State</div>
+              <div class="pill"><b>Useful:</b> Segment, Ship Mode, Payment Mode, Discount</div>
+              <div class="pill"><b>Returns:</b> Returns (1/Yes/True/Returned)</div>
+            </div>
+            <div class="note">
+              Missing columns won’t break the app — the dashboard will gracefully hide affected visuals.
+            </div>
           </div>
         </div>
       </div>
