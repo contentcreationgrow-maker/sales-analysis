@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SuperStore Insight Dashboard</title>
+
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Plotly (interactive charts) -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+    <!-- PapaParse (fast CSV parsing) -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- Top bar -->
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">SS</div>
+          <div class="brandText">
+            <div class="title">SuperStore Insight Dashboard</div>
+            <div class="subtitle">
+              Upload a CSV → Explore trends, profitability, returns, and operational drivers
+            </div>
+          </div>
+        </div>
+
+        <div class="topActions">
+          <label class="fileBtn" for="fileInput">
+            <input id="fileInput" type="file" accept=".csv" />
+            <span>Upload CSV</span>
+          </label>
+
+          <button id="btnReset" class="btn ghost" disabled>Reset</button>
+          <button id="btnExport" class="btn" disabled>Download filtered CSV</button>
+
+          <button id="btnTheme" class="btn ghost" aria-label="Toggle theme">
+            Theme
+          </button>
+
+          <button id="btnHelp" class="btn ghost">Help</button>
+        </div>
+      </header>
+
+      <!-- Layout -->
+      <div class="layout">
+        <!-- Sidebar filters -->
+        <aside class="sidebar">
+          <div class="panel">
+            <div class="panelHeader">
+              <div class="panelTitle">Filters</div>
+              <div class="panelHint">All visuals update instantly</div>
+            </div>
+
+            <div class="field">
+              <label>Year</label>
+              <select id="fYear" multiple></select>
+              <div class="micro">Tip: Ctrl/⌘ to multi-select</div>
+            </div>
+
+            <div class="field">
+              <label>Region</label>
+              <select id="fRegion" multiple></select>
+            </div>
+
+            <div class="field">
+              <label>Category</label>
+              <select id="fCategory" multiple></select>
+            </div>
+
+            <div class="field">
+              <label>Sub-Category</label>
+              <select id="fSubCategory" multiple></select>
+            </div>
+
+            <div class="field">
+              <label>Segment</label>
+              <select id="fSegment" multiple></select>
+            </div>
+
+            <div class="field">
+              <label>Ship Mode</label>
+              <select id="fShipMode" multiple></select>
+            </div>
+
+            <div class="field">
+              <label>Payment Mode</label>
+              <select id="fPaymentMode" multiple></select>
+            </div>
+
+            <div class="field inline">
+              <label class="toggle">
+                <input id="fReturnedOnly" type="checkbox" />
+                <span>Returned only</span>
+              </label>
+
+              <label class="toggle">
+                <input id="fLossOnly" type="checkbox" />
+                <span>Loss orders only</span>
+              </label>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="panelFooter">
+              <div class="status" id="statusText">Upload a CSV to begin.</div>
+              <div class="muted" id="dataMeta"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panelHeader">
+              <div class="panelTitle">Auto Insights</div>
+              <div class="panelHint">Generated from your filtered view</div>
+            </div>
+
+            <ul id="insights" class="insights">
+              <li class="placeholder">No data yet. Upload a CSV.</li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+          <!-- KPI row -->
+          <section class="kpis" id="kpiRow">
+            <!-- injected -->
+          </section>
+
+          <!-- Charts grid -->
+          <section class="grid">
+            <div class="card span2">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Monthly Sales & Profit</div>
+                  <div class="cardSub">See growth vs profitability (zoom/hover)</div>
+                </div>
+              </div>
+              <div id="chMonthlySalesProfit" class="chart"></div>
+            </div>
+
+            <div class="card">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Monthly Profit Margin</div>
+                  <div class="cardSub">Watch margin compression</div>
+                </div>
+              </div>
+              <div id="chMonthlyMargin" class="chart"></div>
+            </div>
+
+            <div class="card">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Category Mix</div>
+                  <div class="cardSub">Sales vs profit by category</div>
+                </div>
+              </div>
+              <div id="chCategoryMix" class="chart"></div>
+            </div>
+
+            <div class="card span2">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Top/Bottom Sub-Categories by Profit</div>
+                  <div class="cardSub">Quickly find winners & loss-makers</div>
+                </div>
+              </div>
+              <div id="chSubcatProfit" class="chart"></div>
+            </div>
+
+            <div class="card">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Region: Margin & Returns</div>
+                  <div class="cardSub">Operational pressure points</div>
+                </div>
+              </div>
+              <div id="chRegionMarginReturns" class="chart"></div>
+            </div>
+
+            <div class="card span2">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Profit by State (USA)</div>
+                  <div class="cardSub">Where profit leaks (select states)</div>
+                </div>
+              </div>
+              <div id="chStateChoropleth" class="chart tall"></div>
+            </div>
+
+            <div class="card">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Discount vs Profit</div>
+                  <div class="cardSub">Are discounts driving losses?</div>
+                </div>
+              </div>
+              <div id="chDiscountProfit" class="chart"></div>
+            </div>
+
+            <div class="card">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Ship Lead Time by Ship Mode</div>
+                  <div class="cardSub">Speed vs economics</div>
+                </div>
+              </div>
+              <div id="chShipLead" class="chart"></div>
+            </div>
+          </section>
+
+          <!-- Tables -->
+          <section class="tables">
+            <div class="card">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Top Profit Products</div>
+                  <div class="cardSub">Concentration risk & what to protect</div>
+                </div>
+              </div>
+              <div class="tableWrap">
+                <table class="tbl" id="tblTopProducts"></table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">Top Loss Products</div>
+                  <div class="cardSub">What’s bleeding margin</div>
+                </div>
+              </div>
+              <div class="tableWrap">
+                <table class="tbl" id="tblLossProducts"></table>
+              </div>
+            </div>
+
+            <div class="card span2">
+              <div class="cardHead">
+                <div>
+                  <div class="cardTitle">State Profit Leaderboard</div>
+                  <div class="cardSub">Best and worst states (sortable)</div>
+                </div>
+              </div>
+              <div class="tableWrap">
+                <table class="tbl" id="tblStates"></table>
+              </div>
+            </div>
+          </section>
+
+          <footer class="footer">
+            Built for interactive deep analysis. Everything runs locally in your browser.
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <!-- Help modal -->
+    <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modalCard">
+        <div class="modalHead">
+          <div>
+            <div class="modalTitle">CSV Expectations</div>
+            <div class="modalSub">
+              Works best with the SuperStore dataset columns. Some columns are optional.
+            </div>
+          </div>
+          <button id="btnCloseHelp" class="btn ghost">Close</button>
+        </div>
+
+        <div class="modalBody">
+          <div class="pillGrid">
+            <div class="pill"><b>Required:</b> Order Date, Sales, Profit</div>
+            <div class="pill"><b>Recommended:</b> Category, Sub-Category, Region, State</div>
+            <div class="pill"><b>Nice to have:</b> Segment, Ship Mode, Payment Mode, Discount</div>
+            <div class="pill"><b>Returns:</b> Returns (1/Yes/True/Returned)</div>
+          </div>
+
+          <div class="note">
+            If some fields are missing, the dashboard will still load but some visuals may hide automatically.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
